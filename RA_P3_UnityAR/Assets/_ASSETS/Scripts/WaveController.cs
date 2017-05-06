@@ -15,7 +15,7 @@ public class WaveController : MonoBehaviour {
     [SerializeField]
     private float xSeparation;
 
-    public static System.Action onWave;
+    public System.Action onWave;
 
     private WaitForSeconds waveSeparationWait;
 
