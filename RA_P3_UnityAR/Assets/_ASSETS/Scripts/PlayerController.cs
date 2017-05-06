@@ -5,7 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public struct Boundary
 {
-    public float xMin, xMax, yMin, yMax;
+    public float xMin, xMax, zMin, zMax;
 }
 
 public class PlayerController : MonoBehaviour {
@@ -51,6 +51,6 @@ public class PlayerController : MonoBehaviour {
         rb.rotation = Quaternion.Euler(0.0f, 0.0f, -rotTilt * rb.velocity.x);
 
         rb.position = new Vector3(Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
-            0.0f, Mathf.Clamp(rb.position.z, boundary.yMin, boundary.yMax));
+            0.0f, Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax));
     }
 }
