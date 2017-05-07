@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
+  <Tracking>
+    <ImageTarget name="Podredumbre" size="1.000000 1.326984" />
+    <ImageTarget name="Pesadilla" size="1.000000 1.353952" />
+    <ImageTarget name="Pantano" size="1.000000 1.346801" />
+    <ImageTarget name="Cicatrices" size="1.000000 1.341137" />
+    <ImageTarget name="oros" size="1.000000 1.586957" />
+    <ImageTarget name="espadas" size="1.000000 1.592689" />
+    <ImageTarget name="copas" size="1.000000 1.603261" />
+    <ImageTarget name="bastos" size="1.000000 1.654596" />
+  </Tracking>
+</QCARConfig>
