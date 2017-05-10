@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyMover : MonoBehaviour {
 
     public float distanceToAdvance;
+    public Vector3 movementDirection;
 
     WaveController waveController;
     Rigidbody rb;
@@ -27,6 +28,6 @@ public class EnemyMover : MonoBehaviour {
 
     void MoveDown()
     {
-        rb.position = rb.position + transform.forward * distanceToAdvance;
+        rb.position = rb.position + waveController.enemySpawnDirection * distanceToAdvance;
     }
 }

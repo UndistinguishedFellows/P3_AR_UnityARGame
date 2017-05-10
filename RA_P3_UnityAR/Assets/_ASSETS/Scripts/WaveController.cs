@@ -9,6 +9,8 @@ public class WaveController : MonoBehaviour {
     public float spawnProbabilytyPerTile;
     public GameObject enemyPrefab;
     public Transform waveSpawnTransform;
+    public Vector3 enemySpawnDirection;
+    public MarkerDetectionScript spawnMarkerScript;
 
     public int columns;
     public float spawnBoundary;
@@ -23,6 +25,7 @@ public class WaveController : MonoBehaviour {
     {
         xSeparation = (spawnBoundary * 2) / columns;
         waveSeparationWait = new WaitForSeconds(waveTimeSeparetion);
+
         StartCoroutine(WaveSpawnCorutine());
     }
 
@@ -34,15 +37,19 @@ public class WaveController : MonoBehaviour {
 
         while (true)
         {
-            if (onWave != null)
-                onWave();
-
-            for (int x = 0; x < columns; ++x)
+            if (spawnMarkerScript.markerDetected())
             {
-                if (Random.value <= spawnProbabilytyPerTile)
+                if (onWave != null)
+                    onWave();
+
+                for (int x = 0; x < columns; ++x)
                 {
-                    Vector3 spawnPos = new Vector3(-spawnBoundary + xSeparation * x + xSeparation * 0.5f, 0.0f, 0.0f);
-                    Instantiate(enemyPrefab, spawnPos + waveSpawnTransform.position, waveSpawnTransform.rotation);
+                    if (Random.value <= spawnProbabilytyPerTile)
+                    {
+                        Vector3 spawnPos = new Vector3(-spawnBoundary + xSeparation * x + xSeparation * 0.5f, 0.0f, 0.0f);
+                        GameObject ship = Instantiate(enemyPrefab, spawnPos + waveSpawnTransform.position, Quaternion.AngleAxis(90.0f, enemySpawnDirection.normalized)) as GameObject;
+                        
+                    }
                 }
             }
 
@@ -63,7 +70,7 @@ public class WaveController : MonoBehaviour {
         {
             Vector3 spawnPos = new Vector3(-spawnBoundary + speparation * x + speparation * 0.5f, 0.0f, 0.0f);
             Gizmos.DrawWireCube(spawnPos + waveSpawnTransform.position, Vector3.one * 0.5f); //TODO: Get the prefab size or separation??
-            Gizmos.DrawLine(spawnPos + waveSpawnTransform.position, waveSpawnTransform.forward + spawnPos + waveSpawnTransform.position);
+            Gizmos.DrawLine(spawnPos + waveSpawnTransform.position, enemySpawnDirection.normalized + spawnPos + waveSpawnTransform.position);
         }
     }
 }
