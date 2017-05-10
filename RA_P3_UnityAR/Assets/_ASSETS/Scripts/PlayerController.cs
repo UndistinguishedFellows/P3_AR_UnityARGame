@@ -37,7 +37,9 @@ public class PlayerController : MonoBehaviour {
     {
         if (Time.time >= timeSinceNextShot)
         {
-            Instantiate(shotPrefab, shotSpawnPont.position, shotSpawnPont.rotation);
+            GameObject go = Instantiate(shotPrefab, shotSpawnPont.position, shotSpawnPont.rotation) as GameObject;
+            Rigidbody goRB = go.GetComponent<Rigidbody>();
+            goRB.velocity = transform.forward * 20;
             lazerAudio.Play();
             timeSinceNextShot += shootingRatio;
         }
@@ -46,11 +48,14 @@ public class PlayerController : MonoBehaviour {
 
     void FixedUpdate()
     {
-        Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
+        /*Vector3 input = new Vector3(Input.GetAxis("Horizontal"), 0.0f, Input.GetAxis("Vertical"));
         rb.velocity = input * speed;
         rb.rotation = Quaternion.Euler(0.0f, 0.0f, -rotTilt * rb.velocity.x);
 
         rb.position = new Vector3(Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax),
-            0.0f, Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax));
+            0.0f, Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax));*/
+
+        //rb.position = new Vector3(rb.position.x, 0.0f, rb.position.z);
+        //rb.rotation = Quaternion.identity;
     }
 }
