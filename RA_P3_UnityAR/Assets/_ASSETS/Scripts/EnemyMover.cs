@@ -15,6 +15,7 @@ public class EnemyMover : MonoBehaviour {
         GameObject goController = GameObject.FindGameObjectWithTag("GameController");
         waveController = goController.GetComponent<WaveController>();
         waveController.onWave += MoveDown;
+        movementDirection = waveController.enemySpawnDirection;
 
         rb = GetComponent<Rigidbody>();
     }
@@ -28,6 +29,6 @@ public class EnemyMover : MonoBehaviour {
 
     void MoveDown()
     {
-        rb.position = rb.position + waveController.enemySpawnDirection * distanceToAdvance;
+        rb.position = rb.position + movementDirection * distanceToAdvance;
     }
 }
