@@ -10,7 +10,6 @@ public class WaveController : MonoBehaviour {
     public GameObject enemyPrefab;
     public Transform waveSpawnTransform;
     public Vector3 enemySpawnDirection;
-    public MarkerDetectionScript spawnMarkerScript;
 
     public int columns;
     public float spawnBoundary;
@@ -45,7 +44,7 @@ public class WaveController : MonoBehaviour {
                 if (Random.value <= spawnProbabilytyPerTile)
                 {
                     Vector3 spawnPos = new Vector3(-spawnBoundary + xSeparation * x + xSeparation * 0.5f, 0.0f, 0.0f);
-                    GameObject ship = Instantiate(enemyPrefab, spawnPos + waveSpawnTransform.position, Quaternion.identity) as GameObject;
+                    GameObject ship = Instantiate(enemyPrefab, spawnPos + waveSpawnTransform.position, Quaternion.identity, waveSpawnTransform) as GameObject;
 
                 }
             }
