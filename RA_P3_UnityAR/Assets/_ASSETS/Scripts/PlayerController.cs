@@ -20,19 +20,23 @@ public class PlayerController : MonoBehaviour {
 
     private Rigidbody rb;
     private AudioSource lazerAudio;
+    private GameController gameController;
 
 	//--------------------------------------------------
 
 	void Start ()
     {
+        timeSinceNextShot = 0.0f;
         rb = GetComponent<Rigidbody>();
         lazerAudio = GetComponent<AudioSource>();
+        GameObject go = GameObject.FindGameObjectWithTag("GameController");
+        gameController = go.GetComponent<GameController>();
     }
 
 	void Update ()
     {
         //transform.position = new Vector3(transform.position.x, transform.position.y, 30.0f);
-        if (Time.time >= timeSinceNextShot)
+        if (!gameController.GameEnded && Time.timeSinceLevelLoad >= timeSinceNextShot)
         {
             GameObject go = Instantiate(shotPrefab, shotSpawnPont.position, shotSpawnPont.rotation) as GameObject; //Quaternion.AngleAxis(90.0f, Vector3.right)
             //Rigidbody goRB = go.GetComponent<Rigidbody>();

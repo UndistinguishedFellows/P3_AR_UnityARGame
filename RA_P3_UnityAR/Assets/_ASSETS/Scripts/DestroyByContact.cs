@@ -7,9 +7,14 @@ public class DestroyByContact : MonoBehaviour {
     public GameObject asteroidExplosion;
     public GameObject playerExplosion;
 
+    public int enemyScore;
+
+    private GameController gameController;
+
 	void Start ()
     {
-		
+        GameObject go = GameObject.FindGameObjectWithTag("GameController");
+        gameController = go.GetComponent<GameController>();
 	}
 
     private void OnTriggerEnter(Collider other)
@@ -20,11 +25,11 @@ public class DestroyByContact : MonoBehaviour {
 
             if(other.CompareTag("Player"))
             {
-                //TODO: Notify game over
+                gameController.GameOver();
                 Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
             }
 
-            //TODO: Punctuation??
+            gameController.Score(enemyScore);
 
             Destroy(gameObject);
             Destroy(other.gameObject);

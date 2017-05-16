@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class WaveController : MonoBehaviour {
 
-    public float waveTimeSeparetion;
+    public float innerWaveTimeSeparetion;
+    public float waveTimeSeparation;
     [Range(0, 1)]
     public float spawnProbabilytyPerTile;
     public GameObject enemyPrefab;
@@ -16,14 +17,28 @@ public class WaveController : MonoBehaviour {
     [SerializeField]
     private float xSeparation;
 
+    public int innerWaveAmmount;
+    private int innerWaveCounter = 0;
+    public int waveAmmount;
+    private int waveCounter = 0;
+
     public System.Action onWave;
 
+    private WaitForSeconds innerWaveSeparationWait;
     private WaitForSeconds waveSeparationWait;
+
+    private GameController gameController;
 
 	void Start ()
     {
+        innerWaveCounter = 0;
+        waveCounter = 0;
+
+        gameController = GetComponent<GameController>();
+        
         xSeparation = (spawnBoundary * 2) / columns;
-        waveSeparationWait = new WaitForSeconds(waveTimeSeparetion);
+        innerWaveSeparationWait = new WaitForSeconds(innerWaveTimeSeparetion);
+        waveSeparationWait = new WaitForSeconds(waveTimeSeparation);
 
         StartCoroutine(WaveSpawnCorutine());
     }
@@ -32,24 +47,60 @@ public class WaveController : MonoBehaviour {
 
     IEnumerator WaveSpawnCorutine()
     {
-        yield return waveSeparationWait;
+        yield return new WaitForSeconds(2.0f);
 
-        while (true)
+        while (!gameController.GameEnded)
+        {
+            while (!gameController.GameEnded && innerWaveCounter < innerWaveAmmount)
+            {
+                if (onWave != null)
+                    onWave();
+
+                for (int x = 0; x < columns; ++x)
+                { 
+                    if (Random.value <= spawnProbabilytyPerTile)
+                    {
+                        Vector3 spawnPos = new Vector3(-spawnBoundary + xSeparation * x + xSeparation * 0.5f, 0.0f, 0.0f);
+                        GameObject ship = Instantiate(enemyPrefab, spawnPos + waveSpawnTransform.position, Quaternion.identity, waveSpawnTransform) as GameObject;
+
+                    }
+                }
+
+                ++innerWaveCounter;
+
+                yield return innerWaveSeparationWait;
+            }
+
+
+            ++waveCounter;
+            spawnProbabilytyPerTile += 0.10f;
+
+            if (waveCounter > waveAmmount)
+            {
+                gameController.Win();
+                break;
+            }
+            
+            StartCoroutine(MoveWhileWaitForWave());
+
+            yield return waveSeparationWait;
+
+            innerWaveCounter = 0;
+        }
+    
+    }
+
+    IEnumerator MoveWhileWaitForWave()
+    {
+        while (innerWaveCounter > 0)
         {
             if (onWave != null)
                 onWave();
 
-            for (int x = 0; x < columns; ++x)
-            {
-                if (Random.value <= spawnProbabilytyPerTile)
-                {
-                    Vector3 spawnPos = new Vector3(-spawnBoundary + xSeparation * x + xSeparation * 0.5f, 0.0f, 0.0f);
-                    GameObject ship = Instantiate(enemyPrefab, spawnPos + waveSpawnTransform.position, Quaternion.identity, waveSpawnTransform) as GameObject;
+            yield return new WaitForSeconds(innerWaveTimeSeparetion);
 
-                }
-            }
-
-            yield return waveSeparationWait;
+            if (innerWaveCounter > 0)
+                break;
         }
     }
 
