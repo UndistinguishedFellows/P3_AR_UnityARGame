@@ -5,31 +5,163 @@ using UnityEngine;
 public class WaveSpawner : MonoBehaviour {
 
 	public GameObject enemyPrefab;
+    public float enemySize;
+    public float enemySeparation;
 
-	public Transform columnSpawn1;
-	public Transform columnSpawn2;
+    [Range(0, 1)]
+    public float spawnProbPerTile;
 
-	Vector3 spawnLine;
+    [SerializeField]
+    private int columns;
+    [SerializeField]
+    private float distanceBetweenEnemies;
+
+
+    //-------------------------------------------------
+
+	public Transform columnSpawnA;
+	public Transform columnSpawnB;
+    public Transform columnSpawnC;
+    public Transform columnSpawnD;
+
+    private bool boundariesCalculed = false;
+
+    MarkerDetectionScript aMarker;
+    MarkerDetectionScript bMarker;
+    MarkerDetectionScript cMarker;
+    MarkerDetectionScript dMarker;
+
+	Vector3 spawnDirection;
+    Plane gamePlane;
+    Vector3 ab;
+    Vector3 cd;
+    Vector3 abMid;
+    Vector3 cdMid;
+
+    public bool BoundariesReady
+    {
+        get { return boundariesCalculed; }
+    }
 
 	void Start () 
 	{
-		
+        aMarker = columnSpawnA.GetComponent<MarkerDetectionScript>();
+        bMarker = columnSpawnB.GetComponent<MarkerDetectionScript>();
+        cMarker = columnSpawnC.GetComponent<MarkerDetectionScript>();
+        dMarker = columnSpawnD.GetComponent<MarkerDetectionScript>();
 	}
 
 	void Update ()
 	{
-		spawnLine = columnSpawn2.position - columnSpawn1.position;
+        if (!boundariesCalculed)
+        {
+            if (aMarker.markerDetected() && bMarker.markerDetected() && cMarker.markerDetected() && dMarker.markerDetected())
+            {
+                //Calc the plane
+                gamePlane = new Plane(columnSpawnA.position, columnSpawnB.position, columnSpawnC.position);
+
+                ab = columnSpawnB.position - columnSpawnA.position;
+                ab.Normalize();
+                cd = columnSpawnD.position - columnSpawnC.position;
+                cd.Normalize();
+
+                //Calc de waves direction
+                //1.Calc mid points for top and bottom
+                abMid = columnSpawnA.position + new Vector3((columnSpawnB.position.x - columnSpawnA.position.x) / 2,
+                    (columnSpawnB.position.y - columnSpawnA.position.y) / 2,
+                    (columnSpawnB.position.z - columnSpawnA.position.z) / 2);
+
+                cdMid = columnSpawnC.position + new Vector3((columnSpawnD.position.x - columnSpawnC.position.x) / 2,
+                    (columnSpawnD.position.y - columnSpawnC.position.y) / 2,
+                    (columnSpawnD.position.z - columnSpawnC.position.z) / 2);
+
+                //2.Calc wave direction
+                spawnDirection = cdMid - abMid;
+                spawnDirection.Normalize();
+
+                //3.Now boundaries are calculed...
+                //TODO: Start a counter??? Start directly waves
+
+                //4.Calc how many enemies must spawn in each line
+                columns = (int)(Vector3.Distance(columnSpawnA.position, columnSpawnB.position) / (enemySize + enemySeparation));
+                distanceBetweenEnemies = Vector3.Distance(columnSpawnA.position, columnSpawnB.position) / columns; //TODO: Stupid calcs...
+
+                boundariesCalculed = true;
+                SpawnLine();
+            }
+        }
 	}
 
 	private void OnDrawGizmos()
 	{
-		Gizmos.color = Color.red;
-		Gizmos.DrawLine (columnSpawn1.position, columnSpawn2.position);
+        Gizmos.color = Color.red;
 
-		float dist = spawnLine.magnitude / 2;
-		Vector3 midPos = columnSpawn1.position + new Vector3(dist, dist, dist);
+		Gizmos.DrawLine (columnSpawnA.position, columnSpawnB.position);
+        Gizmos.DrawLine (columnSpawnB.position, columnSpawnC.position);
+        Gizmos.DrawLine (columnSpawnC.position, columnSpawnD.position);
+        Gizmos.DrawLine (columnSpawnD.position, columnSpawnA.position);
 
-		Gizmos.DrawSphere (midPos, 0.2f);
-		//Gizmos.DrawLine ();
+        if (boundariesCalculed)
+        {
+            Gizmos.DrawLine(columnSpawnA.position, gamePlane.normal + columnSpawnA.position);
+            Gizmos.DrawLine(columnSpawnB.position, gamePlane.normal + columnSpawnB.position);
+            Gizmos.DrawLine(columnSpawnC.position, gamePlane.normal + columnSpawnC.position);
+            Gizmos.DrawLine(columnSpawnD.position, gamePlane.normal + columnSpawnD.position);
+
+            Gizmos.color = Color.green;
+            //Gizmos.DrawWireSphere(abMid, 0.2f);
+            //Gizmos.DrawWireSphere(cdMid, 0.2f);
+            Gizmos.DrawLine(abMid, abMid + spawnDirection);
+
+            Gizmos.color = Color.blue;
+            for (int i = 0; i < columns; ++i)
+            {
+                Vector3 sp = columnSpawnA.position + ab * distanceBetweenEnemies * i;
+                Gizmos.DrawWireSphere(sp, enemySize);
+            }
+        }
+        else
+        {
+            Gizmos.DrawLine(columnSpawnA.position, columnSpawnA.position + columnSpawnA.up * 1);
+            Gizmos.DrawLine(columnSpawnB.position, columnSpawnB.position + columnSpawnB.up * 1);
+            Gizmos.DrawLine(columnSpawnC.position, columnSpawnC.position + columnSpawnC.up * 1);
+            Gizmos.DrawLine(columnSpawnD.position, columnSpawnD.position + columnSpawnD.up * 1);
+
+            Gizmos.color = Color.green;
+
+            Vector3 abMidTmp = columnSpawnA.position + new Vector3((columnSpawnB.position.x - columnSpawnA.position.x) / 2,
+                (columnSpawnB.position.y - columnSpawnA.position.y) / 2,
+                (columnSpawnB.position.z - columnSpawnA.position.z) / 2);
+
+            Vector3 cdMidTmp = columnSpawnC.position + new Vector3((columnSpawnD.position.x - columnSpawnC.position.x) / 2,
+                (columnSpawnD.position.y - columnSpawnC.position.y) / 2,
+                (columnSpawnD.position.z - columnSpawnC.position.z) / 2);
+
+            //Gizmos.DrawWireSphere(abMidTmp, 0.2f);
+            //Gizmos.DrawWireSphere(cdMidTmp, 0.2f);
+
+            Vector3 tmpDir = cdMidTmp - abMidTmp;
+            Gizmos.DrawLine(abMidTmp, abMidTmp + tmpDir.normalized);
+        }
 	}
+
+
+    //------------------------------------------------------------------
+
+    void SpawnLine()
+    {
+        for (int i = 0; i < columns; ++i)
+        {
+            if (Random.value < spawnProbPerTile)
+            {
+                Vector3 sp = columnSpawnA.position + ab * distanceBetweenEnemies * i;
+                GameObject ship = Instantiate(enemyPrefab, sp, transform.rotation) as GameObject;
+
+                EnemyMover mover = ship.GetComponent<EnemyMover>();
+                mover.SetDirection(spawnDirection);
+            }
+
+
+        }
+    }
 }

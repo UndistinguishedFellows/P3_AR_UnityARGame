@@ -4,31 +4,35 @@ using UnityEngine;
 
 public class EnemyMover : MonoBehaviour {
 
-    public float distanceToAdvance;
+    public float speed;
     public Vector3 movementDirection;
 
-    WaveController waveController;
     Rigidbody rb;
     
 	void Start ()
     {
-        GameObject goController = GameObject.FindGameObjectWithTag("GameController");
-        waveController = goController.GetComponent<WaveController>();
-        waveController.onWave += MoveDown;
-        movementDirection = waveController.enemySpawnDirection;
-
         rb = GetComponent<Rigidbody>();
+    }
+
+    private void FixedUpdate()
+    {
+        //rb.position += movementDirection * speed * Time.fixedDeltaTime;
     }
 
     private void OnDestroy()
     {
-        waveController.onWave -= MoveDown;
+        //waveController.onWave -= MoveDown;
     }
 
     //-------------------------------
 
-    void MoveDown()
+    public void SetDirection(Vector3 dir)
     {
-        rb.position = rb.position + movementDirection * distanceToAdvance;
+        movementDirection = dir;
+        if (rb == null)
+            rb = GetComponent<Rigidbody>();
+        
+        rb.velocity = dir * speed;
+        Debug.Log(rb.velocity);
     }
 }
