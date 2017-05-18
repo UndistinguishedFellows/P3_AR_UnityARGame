@@ -45,10 +45,20 @@ public class WaveSpawner : MonoBehaviour {
     Vector3 abMid;
     Vector3 cdMid;
 
+    bool boundsCalculed = false;
+
+    //------------------------------------
+
+    public GameObject startingFilter;
+
+    //------------------------------------
+
     public bool BoundariesReady
     {
         get { return boundariesCalculed; }
     }
+
+    //------------------------------------
 
 	void Start () 
 	{
@@ -58,8 +68,6 @@ public class WaveSpawner : MonoBehaviour {
         bMarker = columnSpawnB.GetComponent<MarkerDetectionScript>();
         cMarker = columnSpawnC.GetComponent<MarkerDetectionScript>();
         dMarker = columnSpawnD.GetComponent<MarkerDetectionScript>();
-
-        StartCoroutine(Wave());
 	}
 
 	void Update ()
@@ -93,6 +101,12 @@ public class WaveSpawner : MonoBehaviour {
             columns = (int)(Vector3.Distance(columnSpawnA.position, columnSpawnB.position) / (enemySize + enemySeparation));
             distanceBetweenEnemies = Vector3.Distance(columnSpawnA.position, columnSpawnB.position) / columns; //TODO: Stupid calcs...
 
+            if (!boundsCalculed)
+            {
+                boundsCalculed = true;
+                StartCoroutine(Wave());
+                startingFilter.SetActive(false);
+            }
         }
 	}
 
