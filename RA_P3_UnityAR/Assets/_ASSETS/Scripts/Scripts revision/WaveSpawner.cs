@@ -40,7 +40,6 @@ public class WaveSpawner : MonoBehaviour {
     MarkerDetectionScript dMarker;
 
 	Vector3 spawnDirection;
-    Plane gamePlane;
     Vector3 ab;
     Vector3 cd;
     Vector3 abMid;
@@ -60,7 +59,6 @@ public class WaveSpawner : MonoBehaviour {
         cMarker = columnSpawnC.GetComponent<MarkerDetectionScript>();
         dMarker = columnSpawnD.GetComponent<MarkerDetectionScript>();
 
-        //TODO: Start waves
         StartCoroutine(Wave());
 	}
 
@@ -69,7 +67,6 @@ public class WaveSpawner : MonoBehaviour {
         if (aMarker.markerDetected() && bMarker.markerDetected() && cMarker.markerDetected() && dMarker.markerDetected())
         {
             //Calc the plane
-            //gamePlane = new Plane(columnSpawnA.position, columnSpawnB.position, columnSpawnC.position);
 
             ab = columnSpawnB.position - columnSpawnA.position;
             ab.Normalize();
@@ -77,7 +74,7 @@ public class WaveSpawner : MonoBehaviour {
             cd.Normalize();
 
             //Calc de waves direction
-            //1.Calc mid points for top and bottom
+            //Calc mid points for top and bottom
             abMid = columnSpawnA.position + new Vector3((columnSpawnB.position.x - columnSpawnA.position.x) / 2,
                 (columnSpawnB.position.y - columnSpawnA.position.y) / 2,
                 (columnSpawnB.position.z - columnSpawnA.position.z) / 2);
@@ -86,18 +83,16 @@ public class WaveSpawner : MonoBehaviour {
                 (columnSpawnD.position.y - columnSpawnC.position.y) / 2,
                 (columnSpawnD.position.z - columnSpawnC.position.z) / 2);
 
-            //2.Calc wave direction
+            //Calc wave direction
             spawnDirection = cdMid - abMid;
             spawnDirection.Normalize();
 
-            //3.Now boundaries are calculed...
-            //TODO: Start a counter??? Start directly waves
+            //Now boundaries are calculed...
 
-            //4.Calc how many enemies must spawn in each line
+            //Calc how many enemies must spawn in each line
             columns = (int)(Vector3.Distance(columnSpawnA.position, columnSpawnB.position) / (enemySize + enemySeparation));
             distanceBetweenEnemies = Vector3.Distance(columnSpawnA.position, columnSpawnB.position) / columns; //TODO: Stupid calcs...
 
-            //boundariesCalculed = true;
         }
 	}
 
