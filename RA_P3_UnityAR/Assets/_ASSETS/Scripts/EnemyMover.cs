@@ -7,21 +7,13 @@ public class EnemyMover : MonoBehaviour {
     public float speed;
     public Vector3 movementDirection;
 
+    public int score;
+
     Rigidbody rb;
     
 	void Start ()
     {
         rb = GetComponent<Rigidbody>();
-    }
-
-    private void FixedUpdate()
-    {
-        //rb.position += movementDirection * speed * Time.fixedDeltaTime;
-    }
-
-    private void OnDestroy()
-    {
-        //waveController.onWave -= MoveDown;
     }
 
     //-------------------------------
@@ -33,6 +25,5 @@ public class EnemyMover : MonoBehaviour {
             rb = GetComponent<Rigidbody>();
         
         rb.velocity = dir * speed;
-        Debug.Log(rb.velocity);
     }
 }

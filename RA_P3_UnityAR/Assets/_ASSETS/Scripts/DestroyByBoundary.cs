@@ -4,9 +4,19 @@ using UnityEngine;
 
 public class DestroyByBoundary : MonoBehaviour {
 
+    private GameController gc;
 
-    private void OnTriggerExit(Collider other)
+    void Start()
     {
+        GameObject go = GameObject.FindGameObjectWithTag("GameController");
+        gc = go.GetComponent<GameController>();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Enemy"))
+            gc.Score(-5);
+        
         Destroy(other.gameObject);
     }
 
