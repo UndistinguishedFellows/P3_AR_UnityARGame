@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 public class GameController : MonoBehaviour {
 
     public Text scoreText;
-    //public Text restartText;
+    public Button restartButton;
     public Text winText;
     public Text loseText;
 
@@ -17,7 +17,7 @@ public class GameController : MonoBehaviour {
 	void Start () 
     {
         scoreText.text = "Score: 0";
-        //restartText.gameObject.SetActive(false);
+        restartButton.gameObject.SetActive(false);
         winText.gameObject.SetActive(false);
         loseText.gameObject.SetActive(false);
 
@@ -30,11 +30,6 @@ public class GameController : MonoBehaviour {
     {
         if (score < 0)
             GameOver();
-
-        if (gameEnded)
-        {
-            //TODO: Restart level
-        }
 	}
 
     //--------------------------------------------------------------------------
@@ -48,19 +43,25 @@ public class GameController : MonoBehaviour {
     {
         gameEnded = true;
         winText.gameObject.SetActive(true);
-        //restartText.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
     }
 
     public void GameOver()
     {
         gameEnded = true;
         loseText.gameObject.SetActive(true);
-        //restartText.gameObject.SetActive(true);
+        restartButton.gameObject.SetActive(true);
     }
 
     public void Score(int _score)
     {
         score += _score;
         scoreText.text = "Score: " + score;
+    }
+
+    public void Restart()
+    {
+        if (gameEnded)
+            SceneManager.LoadScene("scene2");
     }
 }
